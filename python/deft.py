@@ -41,7 +41,7 @@ class deft(object):
         return lib.at_c(self.obj, i, j, k)
 
     def copy_data_from(self, data):
-        return lib.copy_data_from_c(self.obj, data.ctypes.data_as(ct.POINTER(ct.c_double)))
+        return lib.copy_data_from_c(self.obj, data.ctypes.data_as(ct.POctypes.INTER(ct.c_double)))
 
     def integrate(self):
         return lib.integrate_c(self.obj)
@@ -50,7 +50,7 @@ class deft(object):
         return lib.interpolate_c(self.obj, new_x, new_y, new_z)
 
     def compute_periodic_superposition(self, num, loc, func):
-        return lib.create_periodic_superposition_c(self.obj, num, loc, func)
+        return lib.compute_periodic_superposition_c(self.obj, num, loc.ctypes.data_as(ct.POINTER(ct.c_double)), func)
 
 def fourier_interpolate(grd, new_x, new_y, new_z, ax, ay, az):
 
@@ -67,18 +67,16 @@ def fourier_interpolate(grd, new_x, new_y, new_z, ax, ay, az):
                 arr[i,j,k] = arr_deft.at(i,j,k)
     return arr
     
-def compute_periodic_superposition(grd, loc, ax, ay, az, func):
+def compute_periodic_superposition(grd_pts, loc, ax, ay, az, func):
 
-    grd_deft = deft(grd.shape[0], grd.shape[1], grd.shape[2], ax, ay, az)
-
+    grd_deft = deft(grd_pts[0], grd_pts[1], grd_pts[2], ax, ay, az)
     callback_type = ct.CFUNCTYPE(ct.c_double, ct.c_double)
     callback_func = callback_type(func)
-
-    grd_deft.compute_periodic_superposition(loc.shape[0], loc, callback_func)
-
-    grd = np.require(np.zeros([new_x,new_y,new_z]), dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
-    for k in range(new_x):
-        for j in range(new_y):
-            for i in range(new_z):
+    loc_aligned = np.require(loc, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    grd_deft.compute_periodic_superposition(loc.shape[0], loc_aligned, callback_func)
+    grd = np.zeros(grd_pts)
+    for k in range(grd.shape[0]):
+        for j in range(grd.shape[1]):
+            for i in range(grd.shape[2]):
                 grd[i,j,k] = grd_deft.at(i,j,k)
     return grd

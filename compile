@@ -6,5 +6,5 @@ if [ -d lib ]; then rm -r lib; fi
 mkdir lib
 
 # compile deft library
-g++ -O3 -fopenmp -c -I/home/EAC/armadillo/include/ -I./include -fPIC source/deft.cpp -o obj/deft.o 
-g++ -O3 -fopenmp -shared -Wl,-soname,libdeft.so -o lib/libdeft.so obj/deft.o -L/usr/local/fftw/gcc/3.3.4/lib64 -lfftw3 -lm -L/home/EAC/armadillo/lib/ -larmadillo
+g++ -O3 -g -Werror -Wall -fopenmp -c -I/home/EAC/armadillo/include/ -I./include -fPIC source/deft.cpp -o obj/deft.o 
+g++ -O3 -g -Werror -Wall -fopenmp -shared -Wl,-soname,libdeft.so -o lib/libdeft.so obj/deft.o -L/usr/local/fftw/gcc/3.3.4/lib64 -lfftw3 -lm -L/home/EAC/armadillo/lib/ -larmadillo

@@ -293,18 +293,12 @@ deft* deft::interpolate(const size_t new_x, const size_t new_y, const size_t new
     grd->_dataFT->fill(0.0);
 
     // extract grid dimensions
-    size_t n1 = this->_xDim;  size_t n2 = this->_yDim;  size_t n3 = this->_zDim;
-    size_t dn1 = grd->_xDim;  size_t dn2 = grd->_yDim;  size_t dn3 = grd->_zDim;
+    size_t n2 = this->_yDim;  size_t n3 = this->_zDim;
+    size_t dn2 = grd->_yDim;  size_t dn3 = grd->_zDim;
     // todo: double check that new grid is denser than old grid
 
     // compute nominal halfway point
     size_t h1 = this->_xDim/2;  size_t h2 = this->_yDim/2;  size_t h3 = this->_zDim/2;
-
-    // set flags for odd/even
-    bool isEvenX = false, isEvenY = false, isEvenZ = false;
-    if (this->_xDim%2 == 0){bool isEvenX=true;}
-    if (this->_yDim%2 == 0){bool isEvenY=true;}
-    if (this->_zDim%2 == 0){bool isEvenZ=true;}
 
     // ----- first part of y, first part of z -----
     (*grd->_dataFT)(span(0,h1), span(0,h2), span(0,h3)) = (*this->_dataFT)(span(0,h1), span(0,h2), span(0,h3));
@@ -338,7 +332,7 @@ void deft::compute_periodic_superposition(mat loc, double (*func)(double)){
     // compute fourier transform
     this->computeFT();
 
-    const complex<double> i = (0.0, 1.0);
+    const complex<double> i = {0.0, 1.0};
     // loop over k-vectors
     for(size_t k=0; k<this->_dataFT->n_elem; ++k){
 
@@ -348,15 +342,14 @@ void deft::compute_periodic_superposition(mat loc, double (*func)(double)){
         kvec(2) = this->kVecZ(k);
 
         // compute structure factor for this k-vector
-        complex<double> strFact = (0.0, 0.0);
-        for(size_t a=0; a<loc.n_cols; ++a){
-            double k_dot_r = dot(kvec, loc.col(a));
-            strFact += exp(-i*k_dot_r);
+        complex<double> str_fact = {0.0, 0.0};
+        for(size_t a=0; a<loc.n_rows; ++a){
+            double k_dot_r = dot(kvec, loc.row(a));
+            str_fact += exp(-i*k_dot_r);
         }
 
-        // compute f(k)
-        double fk = func(this->kVecLen(k));
-        this->_dataFT->at(k) = strFact * fk;
+        // evaluate function
+        this->_dataFT->at(k) = str_fact * func(this->kVecLen(k));
     }
 
     // compute inverse fourier transform and divide by volume
@@ -380,12 +373,10 @@ extern "C"{
         return grd->at(i, j, k);
     }
 
-    // copy data
     void copy_data_from_c(deft* grd, const double* rawData){
         grd->copy_data_from(rawData);
     }
 
-    // integrate
     double integrate_c(const deft* grd){
         return grd->integrate();
     }
@@ -395,7 +386,7 @@ extern "C"{
     }
 
     void compute_periodic_superposition_c(deft* grd, size_t num, double* loc, double (*func)(double)){
-        mat loc_mat(loc, 3, num);
+        mat loc_mat(loc, num, 3);
         return grd->compute_periodic_superposition(loc_mat, func);
     }
 }
