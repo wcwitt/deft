@@ -85,7 +85,7 @@ deft::deft(const deft& grd):
 }
 
 // copy data
-void deft::copyDataFrom(const double* rawData){
+void deft::copy_data_from(const double* rawData){
     double* dataPtr = _data->memptr();
     memcpy(dataPtr, rawData, _dimXYZ*sizeof(double));
 }
@@ -381,8 +381,8 @@ extern "C"{
     }
 
     // copy data
-    void copyDataFrom_c(deft* grd, const double* rawData){
-        grd->copyDataFrom(rawData);
+    void copy_data_from_c(deft* grd, const double* rawData){
+        grd->copy_data_from(rawData);
     }
 
     // integrate

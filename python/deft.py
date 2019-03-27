@@ -29,6 +29,9 @@ class deft(object):
         lib.interpolate_c.argtypes = [ct.c_size_t, ct.c_size_t, ct.c_size_t]
         lib.interpolate_c.restype = ct.c_void_p
 
+        lib.compute_periodic_superposition_c.argtypes = [ct.c_void_p, ct.c_size_t, ct.POINTER(ct.c_double), ct.CFUNCTYPE(ct.c_double,ct.c_double)]
+        lib.compute_periodic_superposition_c.restype = ct.c_void_p
+
         self.obj = lib.deft_c(nx, ny, nz, a1, a2, a3)
 
     def equals(self, val):
@@ -37,8 +40,8 @@ class deft(object):
     def at(self, i, j, k):
         return lib.at_c(self.obj, i, j, k)
 
-    def copyDataFrom(self, data):
-        return lib.copyDataFrom_c(self.obj, data.ctypes.data_as(ct.POINTER(ct.c_double)))
+    def copy_data_from(self, data):
+        return lib.copy_data_from_c(self.obj, data.ctypes.data_as(ct.POINTER(ct.c_double)))
 
     def integrate(self):
         return lib.integrate_c(self.obj)
@@ -46,6 +49,8 @@ class deft(object):
     def interpolate(self, new_x, new_y, new_z):
         return lib.interpolate_c(self.obj, new_x, new_y, new_z)
 
+    def compute_periodic_superposition(self, num, loc, func):
+        return lib.create_periodic_superposition_c(self.obj, num, loc, func)
 
 def fourier_interpolate(grd, new_x, new_y, new_z, ax, ay, az):
 
@@ -62,3 +67,18 @@ def fourier_interpolate(grd, new_x, new_y, new_z, ax, ay, az):
                 arr[i,j,k] = arr_deft.at(i,j,k)
     return arr
     
+def compute_periodic_superposition(grd, loc, ax, ay, az, func):
+
+    grd_deft = deft(grd.shape[0], grd.shape[1], grd.shape[2], ax, ay, az)
+
+    callback_type = ct.CFUNCTYPE(ct.c_double, ct.c_double)
+    callback_func = callback_type(func)
+
+    grd_deft.compute_periodic_superposition(loc.shape[0], loc, callback_func)
+
+    grd = np.require(np.zeros([new_x,new_y,new_z]), dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    for k in range(new_x):
+        for j in range(new_y):
+            for i in range(new_z):
+                grd[i,j,k] = grd_deft.at(i,j,k)
+    return grd

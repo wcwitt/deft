@@ -21,7 +21,7 @@ public:
     double operator()(const size_t, const size_t, const size_t) const;
 
     // copy data
-    void copyDataFrom(const double*);
+    void copy_data_from(const double*);
 
     // assignment
     void equals(const double);
