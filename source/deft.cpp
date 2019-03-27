@@ -330,6 +330,41 @@ deft* deft::interpolate(const size_t new_x, const size_t new_y, const size_t new
 
 }
 
+
+
+// other fourier transform-enabled functionality
+void deft::compute_periodic_superposition(mat loc, double (*func)(double)){
+
+    // compute fourier transform
+    this->computeFT();
+
+    const complex<double> i = (0.0, 1.0);
+    // loop over k-vectors
+    for(size_t k=0; k<this->_dataFT->n_elem; ++k){
+
+        vec kvec(3);
+        kvec(0) = this->kVecX(k);
+        kvec(1) = this->kVecY(k);
+        kvec(2) = this->kVecZ(k);
+
+        // compute structure factor for this k-vector
+        complex<double> strFact = (0.0, 0.0);
+        for(size_t a=0; a<loc.n_cols; ++a){
+            double k_dot_r = dot(kvec, loc.col(a));
+            strFact += exp(-i*k_dot_r);
+        }
+
+        // compute f(k)
+        double fk = func(this->kVecLen(k));
+        this->_dataFT->at(k) = strFact * fk;
+    }
+
+    // compute inverse fourier transform and divide by volume
+    this->computeIFT();
+    this->divideEquals(this->vol());
+}
+
+
 extern "C"{
 
     deft* deft_c(const size_t numX, const size_t numY, const size_t numZ, 

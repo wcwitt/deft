@@ -93,6 +93,9 @@ public:
     // interpolate
     deft* interpolate(const size_t new_x, const size_t new_y, const size_t new_z);
 
+    // compute periodic superposition
+    void compute_periodic_superposition(mat loc, double (*func)(double));
+
 private:
 public:
 
