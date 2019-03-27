@@ -372,26 +372,30 @@ extern "C"{
         return new deft(numX, numY, numZ, vecX, vecY, vecZ);
     }
 
-    void equals_c(deft* deft, const double val){
-        deft->equals(val);
+    void equals_c(deft* grd, const double val){
+        grd->equals(val);
     }
 
-    double at_c(const deft* deft, const size_t i, const size_t j, const size_t k){
-        return deft->at(i, j, k);
+    double at_c(const deft* grd, const size_t i, const size_t j, const size_t k){
+        return grd->at(i, j, k);
     }
 
     // copy data
-    void copyDataFrom_c(deft* deft, const double* rawData){
-        deft->copyDataFrom(rawData);
+    void copyDataFrom_c(deft* grd, const double* rawData){
+        grd->copyDataFrom(rawData);
     }
 
     // integrate
-    double integrate_c(const deft* deft){
-        return deft->integrate();
+    double integrate_c(const deft* grd){
+        return grd->integrate();
     }
 
-    deft* interpolate_c(deft* deft, const size_t new_x, const size_t new_y, const size_t new_z){
-        return deft->interpolate(new_x, new_y, new_z);
+    deft* interpolate_c(deft* grd, const size_t new_x, const size_t new_y, const size_t new_z){
+        return grd->interpolate(new_x, new_y, new_z);
     }
 
+    void compute_periodic_superposition_c(deft* grd, size_t num, double* loc, double (*func)(double)){
+        mat loc_mat(loc, 3, num);
+        return grd->compute_periodic_superposition(loc_mat, func);
+    }
 }
