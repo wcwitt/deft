@@ -2,7 +2,7 @@
 
 **deft** is a C++ library providing Fourier-transform-based tools for data on three-dimensional grids, including
 
-  * various derivatives (various gradients, the Laplacian, etc.) computing using Fourier Transforms;
+  * various derivatives (gradients, the Laplacian, etc.) computed with Fourier transforms;
   * interpolation and filtering with Fourier transforms;
   * sums of functions duplicated over a lattice.
 
