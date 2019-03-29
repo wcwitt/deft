@@ -13,7 +13,7 @@
   
 **deft** (currently) has several dependencies:
 
-  * [Armadillo](http://arma.sourceforge.net/),  C++ library for linear algebra & scientific computing;
-  * [FFTW](http://www.fftw.org/), "Fastest Fourier Transform in the West".
+  * [Armadillo](http://arma.sourceforge.net/), a C++ library for linear algebra & scientific computing;
+  * [FFTW](http://www.fftw.org/), the "Fastest Fourier Transform in the West".
 
 **deft** is work in progress.
