@@ -1,16 +1,16 @@
 # deft: Data Equipped with Fourier Transforms
 
-**deft** is a C++ library providing Fourier-Transform-based tools for data on three-dimensional grids, including
+**deft** is a C++ library providing Fourier-transform-based tools for data on three-dimensional grids, including
 
   * various derivatives (various gradients, the Laplacian, etc.) computing using Fourier Transforms;
-  * interpolation and filtering with Fourier Transforms;
-  * sums of functions defined on a lattice.
+  * interpolation and filtering with Fourier transforms;
+  * sums of functions duplicated over a lattice.
 
 **deft** includes a python wrapper. For example applications, see
 
-  * example: [superpositions of functions on a lattice](/python/example.ipynb);
   * example: 
-
+  * example: [sums of functions over a lattice](/python/sum-over-lattice.ipynb);
+  
 **deft** (currently) has several dependencies:
 
   * [Armadillo](http://arma.sourceforge.net/) (C++ library for linear algebra & scientific computing)
