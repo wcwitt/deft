@@ -327,7 +327,7 @@ deft* deft::interpolate(const size_t new_x, const size_t new_y, const size_t new
 
 
 // other fourier transform-enabled functionality
-void deft::compute_periodic_superposition(mat loc, double (*func)(double)){
+void deft::sum_over_lattice(mat loc, double (*func)(double)){
 
     // compute fourier transform
     this->computeFT();
@@ -385,8 +385,8 @@ extern "C"{
         return grd->interpolate(new_x, new_y, new_z);
     }
 
-    void compute_periodic_superposition_c(deft* grd, size_t num, double* loc, double (*func)(double)){
+    void sum_over_lattice_c(deft* grd, size_t num, double* loc, double (*func)(double)){
         mat loc_mat(loc, num, 3);
-        return grd->compute_periodic_superposition(loc_mat, func);
+        return grd->sum_over_lattice(loc_mat, func);
     }
 }

@@ -29,8 +29,8 @@ class deft(object):
         lib.interpolate_c.argtypes = [ct.c_size_t, ct.c_size_t, ct.c_size_t]
         lib.interpolate_c.restype = ct.c_void_p
 
-        lib.compute_periodic_superposition_c.argtypes = [ct.c_void_p, ct.c_size_t, ct.POINTER(ct.c_double), ct.CFUNCTYPE(ct.c_double,ct.c_double)]
-        lib.compute_periodic_superposition_c.restype = ct.c_void_p
+        lib.sum_over_lattice_c.argtypes = [ct.c_void_p, ct.c_size_t, ct.POINTER(ct.c_double), ct.CFUNCTYPE(ct.c_double,ct.c_double)]
+        lib.sum_over_lattice_c.restype = ct.c_void_p
 
         self.obj = lib.deft_c(nx, ny, nz, a1, a2, a3)
 
@@ -49,8 +49,8 @@ class deft(object):
     def interpolate(self, new_x, new_y, new_z):
         return lib.interpolate_c(self.obj, new_x, new_y, new_z)
 
-    def compute_periodic_superposition(self, num, loc, func):
-        return lib.compute_periodic_superposition_c(self.obj, num, loc.ctypes.data_as(ct.POINTER(ct.c_double)), func)
+    def sum_over_lattice(self, num, loc, func):
+        return lib.sum_over_lattice_c(self.obj, num, loc.ctypes.data_as(ct.POINTER(ct.c_double)), func)
 
 def fourier_interpolate(grd, new_x, new_y, new_z, ax, ay, az):
 
@@ -67,13 +67,13 @@ def fourier_interpolate(grd, new_x, new_y, new_z, ax, ay, az):
                 arr[i,j,k] = arr_deft.at(i,j,k)
     return arr
     
-def compute_periodic_superposition(grd_pts, loc, ax, ay, az, func):
+def sum_over_lattice(grd_pts, loc, ax, ay, az, func):
 
     grd_deft = deft(grd_pts[0], grd_pts[1], grd_pts[2], ax, ay, az)
     callback_type = ct.CFUNCTYPE(ct.c_double, ct.c_double)
     callback_func = callback_type(func)
     loc_aligned = np.require(loc, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
-    grd_deft.compute_periodic_superposition(loc.shape[0], loc_aligned, callback_func)
+    grd_deft.sum_over_lattice(loc.shape[0], loc_aligned, callback_func)
     grd = np.zeros(grd_pts)
     for k in range(grd.shape[0]):
         for j in range(grd.shape[1]):
