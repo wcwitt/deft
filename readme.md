@@ -8,7 +8,6 @@
 
 **DEFT** includes a python wrapper. For example applications, see
 
-  * example: 
   * example: [sums of functions over a lattice](/python/sum-over-lattice.ipynb).
   
 **DEFT** (currently) has several dependencies:
