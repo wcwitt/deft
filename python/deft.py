@@ -29,6 +29,21 @@ class deft(object):
         lib.integrate_c.argtypes = [ct.c_void_p]
         lib.integrate_c.restype = ct.c_double
 
+        lib.compute_gradient_x_c.argtypes = [ct.c_void_p]
+        lib.compute_gradient_x_c.restype = ct.c_void_p
+
+        lib.compute_gradient_y_c.argtypes = [ct.c_void_p]
+        lib.compute_gradient_y_c.restype = ct.c_void_p
+
+        lib.compute_gradient_z_c.argtypes = [ct.c_void_p]
+        lib.compute_gradient_z_c.restype = ct.c_void_p
+
+        lib.compute_gradient_squared_c.argtypes = [ct.c_void_p]
+        lib.compute_gradient_squared_c.restype = ct.c_void_p
+
+        lib.compute_laplacian_c.argtypes = [ct.c_void_p]
+        lib.compute_laplacian_c.restype = ct.c_void_p
+
         lib.interpolate_c.argtypes = [ct.c_size_t, ct.c_size_t, ct.c_size_t]
         lib.interpolate_c.restype = ct.c_void_p
 
@@ -51,19 +66,19 @@ class deft(object):
         return lib.integrate_c(self.obj)
 
     def compute_gradient_x(self):
-        lib.compute_gradient_x(self.obj)
+        lib.compute_gradient_x_c(self.obj)
 
     def compute_gradient_y(self):
-        lib.compute_gradient_y(self.obj)
+        lib.compute_gradient_y_c(self.obj)
 
     def compute_gradient_z(self):
-        lib.compute_gradient_z(self.obj)
+        lib.compute_gradient_z_c(self.obj)
 
     def compute_gradient_squared(self):
-        lib.compute_gradient_squared(self.obj)
+        lib.compute_gradient_squared_c(self.obj)
 
     def compute_laplacian(self):
-        lib.compute_laplacian(self.obj)
+        lib.compute_laplacian_c(self.obj)
 
     def interpolate(self, new_x, new_y, new_z):
         return lib.interpolate_c(self.obj, new_x, new_y, new_z)
@@ -78,7 +93,7 @@ def fourier_interpolate(grd, new_x, new_y, new_z, ax, ay, az):
     ax  = np.require(ax, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
     ay  = np.require(ay, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
     az  = np.require(az, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
-    out = np.require(np.zeros([new_x,new_y,new_z]), dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    out = np.require(np.zeros([new_x,new_y,new_z], order='F'), dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
 
     # use deft to interpolate
     grd_deft = deft(grd.shape[0], grd.shape[1], grd.shape[2], ax, ay, az)
@@ -87,12 +102,58 @@ def fourier_interpolate(grd, new_x, new_y, new_z, ax, ay, az):
     out_deft.obj = grd_deft.interpolate(new_x, new_y, new_z)
 
     # return the result as a numpy array
-    for k in range(new_x):
+    for k in range(new_z):
         for j in range(new_y):
-            for i in range(new_z):
+            for i in range(new_x):
                 out[i,j,k] = out_deft.at(i,j,k)
     return out
     
+def compute_gradient(grd, direc, ax, ay, az):
+
+    # ensure the numpy arrays have the expected alignment
+    grd = np.require(grd, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    ax  = np.require(ax, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    ay  = np.require(ay, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    az  = np.require(az, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    out = np.require(np.zeros(grd.shape, order='F'), dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+
+    # use deft to compute gradient
+    grd_deft = deft(grd.shape[0], grd.shape[1], grd.shape[2], ax, ay, az)
+    if direc=='x':
+        grd_deft.compute_gradient_x()
+    elif direc=='y':
+        grd_deft.compute_gradient_y()
+    elif direc=='z':
+        grd_deft.compute_gradient_z()
+
+    # return the result as a numpy array
+    for k in range(out.shape[2]):
+        for j in range(out.shape[1]):
+            for i in range(out.shape[0]):
+                out[i,j,k] = grd_deft.at(i,j,k)
+    return out
+
+def compute_laplacian(grd, ax, ay, az):
+
+    # ensure the numpy arrays have the expected alignment
+    grd = np.require(grd, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    ax  = np.require(ax, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    ay  = np.require(ay, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    az  = np.require(az, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    out = np.require(np.zeros(grd.shape, order='F'), dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+
+    # use deft to compute gradient
+    grd_deft = deft(grd.shape[0], grd.shape[1], grd.shape[2], ax, ay, az)
+    grd_deft.compute_laplacian()
+
+    # return the result as a numpy array
+    for k in range(out.shape[2]):
+        for j in range(out.shape[1]):
+            for i in range(out.shape[0]):
+                out[i,j,k] = grd_deft.at(i,j,k)
+    return out
+
+
 def sum_over_lattice(grd_pts, loc, ax, ay, az, func):
 
     # ensure the numpy arrays have the expected alignment
@@ -100,7 +161,7 @@ def sum_over_lattice(grd_pts, loc, ax, ay, az, func):
     ax  = np.require(ax, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
     ay  = np.require(ay, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
     az  = np.require(az, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
-    out = np.require(np.zeros(grd_pts), dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    out = np.require(np.zeros(grd_pts, order='F'), dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
     
     # use deft to perform the sum
     out_deft = deft(grd_pts[0], grd_pts[1], grd_pts[2], ax, ay, az)
@@ -109,8 +170,8 @@ def sum_over_lattice(grd_pts, loc, ax, ay, az, func):
     out_deft.sum_over_lattice(loc.shape[0], loc, callback_func)
     
     # return the result as a numpy array
-    for k in range(out.shape[0]):
+    for k in range(out.shape[2]):
         for j in range(out.shape[1]):
-            for i in range(out.shape[2]):
+            for i in range(out.shape[0]):
                 out[i,j,k] = out_deft.at(i,j,k)
     return out

@@ -398,7 +398,7 @@ extern "C"{
         grd->compute_gradient_squared();
     }
 
-    void compute_laplacian(deft* grd){
+    void compute_laplacian_c(deft* grd){
         grd->compute_laplacian();
     }
 
