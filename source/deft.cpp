@@ -156,7 +156,7 @@ void deft::computeIFT(){
 }
 
 // derivatives (based on fourier transforms)
-void deft::computeGradientX(){
+void deft::compute_gradient_x(){
     const complex<double> i(0.0,1.0);
     computeFT();
     for(size_t k=0; k<_dataFT->n_elem; ++k){
@@ -164,7 +164,7 @@ void deft::computeGradientX(){
     }
     computeIFT();
 }
-void deft::computeGradientY(){
+void deft::compute_gradient_y(){
     const complex<double> i(0.0,1.0);
     computeFT();
     for(size_t k=0; k<_dataFT->n_elem; ++k){
@@ -172,7 +172,7 @@ void deft::computeGradientY(){
     }
     computeIFT();
 }
-void deft::computeGradientZ(){
+void deft::compute_gradient_z(){
     const complex<double> i(0.0,1.0);
     computeFT();
     for(size_t k=0; k<_dataFT->n_elem; ++k){
@@ -180,31 +180,31 @@ void deft::computeGradientZ(){
     }
     computeIFT();
 }
-void deft::computeGradientSquared(){
+void deft::compute_gradient_squared(){
 
     // create two copies
     deft orig(*this);
     deft tmp(*this);
     
     // x direction
-    tmp.computeGradientX();
+    tmp.compute_gradient_x();
     tmp.multiplyEquals(tmp);
     this->equals(tmp);
 
     // y direction
     tmp.equals(orig);
-    tmp.computeGradientY();
+    tmp.compute_gradient_y();
     tmp.multiplyEquals(tmp);
     this->addEquals(tmp);
 
     // z direction
     tmp.equals(orig);
-    tmp.computeGradientZ();
+    tmp.compute_gradient_z();
     tmp.multiplyEquals(tmp);
     this->addEquals(tmp);
 }
 
-void deft::computeLaplacian(){
+void deft::compute_laplacian(){
     computeFT();
     for(size_t k=0; k<_dataFT->n_elem; ++k){
         _dataFT->at(k) *= - _kVecLen->at(k) * _kVecLen->at(k);
@@ -381,12 +381,33 @@ extern "C"{
         return grd->integrate();
     }
 
+    void compute_gradient_x_c(deft* grd){
+        grd->compute_gradient_x();
+        return;
+    }
+
+    void compute_gradient_y_c(deft* grd){
+        grd->compute_gradient_y();
+    }
+
+    void compute_gradient_z_c(deft* grd){
+        grd->compute_gradient_z();
+    }
+
+    void compute_gradient_squared_c(deft* grd){
+        grd->compute_gradient_squared();
+    }
+
+    void compute_laplacian(deft* grd){
+        grd->compute_laplacian();
+    }
+
     deft* interpolate_c(deft* grd, const size_t new_x, const size_t new_y, const size_t new_z){
         return grd->interpolate(new_x, new_y, new_z);
     }
 
     void sum_over_lattice_c(deft* grd, size_t num, double* loc, double (*func)(double)){
         mat loc_mat(loc, num, 3);
-        return grd->sum_over_lattice(loc_mat, func);
+        grd->sum_over_lattice(loc_mat, func);
     }
 }

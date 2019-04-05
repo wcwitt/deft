@@ -60,11 +60,11 @@ public:
     void computeIFT();
 
     // derivatives (using fourier transforms)
-    void computeGradientX();
-    void computeGradientY();
-    void computeGradientZ();
-    void computeGradientSquared();
-    void computeLaplacian();
+    void compute_gradient_x();
+    void compute_gradient_y();
+    void compute_gradient_z();
+    void compute_gradient_squared();
+    void compute_laplacian();
 
     // integrate
     double integrate() const;

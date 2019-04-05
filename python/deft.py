@@ -45,16 +45,31 @@ class deft(object):
         return lib.at_c(self.obj, i, j, k)
 
     def copy_data_from(self, data):
-        return lib.copy_data_from_c(self.obj, data.ctypes.data_as(ct.POINTER(ct.c_double)))
+        lib.copy_data_from_c(self.obj, data.ctypes.data_as(ct.POINTER(ct.c_double)))
 
     def integrate(self):
         return lib.integrate_c(self.obj)
+
+    def compute_gradient_x(self)
+        lib.compute_gradient_x(self.obj)
+
+    def compute_gradient_y(self)
+        lib.compute_gradient_y(self.obj)
+
+    def compute_gradient_z(self)
+        lib.compute_gradient_z(self.obj)
+
+    def compute_gradient_squared(self)
+        lib.compute_gradient_squared(self.obj)
+
+    def compute_laplacian(self):
+        lib.compute_laplacian(self.obj)
 
     def interpolate(self, new_x, new_y, new_z):
         return lib.interpolate_c(self.obj, new_x, new_y, new_z)
 
     def sum_over_lattice(self, num, loc, func):
-        return lib.sum_over_lattice_c(self.obj, num, loc.ctypes.data_as(ct.POINTER(ct.c_double)), func)
+        lib.sum_over_lattice_c(self.obj, num, loc.ctypes.data_as(ct.POINTER(ct.c_double)), func)
 
 def fourier_interpolate(grd, new_x, new_y, new_z, ax, ay, az):
 
