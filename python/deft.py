@@ -88,12 +88,11 @@ class deft(object):
 
 def fourier_interpolate(grd, new_x, new_y, new_z, ax, ay, az):
 
-    # ensure the numpy arrays have the expected alignment
+    # ensure the input arrays have the expected alignment
     grd = np.require(grd, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
-    ax  = np.require(ax, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
-    ay  = np.require(ay, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
-    az  = np.require(az, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
-    out = np.require(np.zeros([new_x,new_y,new_z], order='F'), dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    ax  = np.require(ax,  dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    ay  = np.require(ay,  dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    az  = np.require(az,  dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
 
     # use deft to interpolate
     grd_deft = deft(grd.shape[0], grd.shape[1], grd.shape[2], ax, ay, az)
@@ -102,6 +101,7 @@ def fourier_interpolate(grd, new_x, new_y, new_z, ax, ay, az):
     out_deft.obj = grd_deft.interpolate(new_x, new_y, new_z)
 
     # return the result as a numpy array
+    out = np.require(np.zeros([new_x,new_y,new_z], order='F'), dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
     for k in range(new_z):
         for j in range(new_y):
             for i in range(new_x):
@@ -110,15 +110,15 @@ def fourier_interpolate(grd, new_x, new_y, new_z, ax, ay, az):
     
 def compute_gradient(grd, direc, ax, ay, az):
 
-    # ensure the numpy arrays have the expected alignment
+    # ensure the input arrays have the expected alignment
     grd = np.require(grd, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
-    ax  = np.require(ax, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
-    ay  = np.require(ay, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
-    az  = np.require(az, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
-    out = np.require(np.zeros(grd.shape, order='F'), dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    ax  = np.require(ax,  dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    ay  = np.require(ay,  dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    az  = np.require(az,  dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
 
     # use deft to compute gradient
     grd_deft = deft(grd.shape[0], grd.shape[1], grd.shape[2], ax, ay, az)
+    grd_deft.copy_data_from(grd)
     if direc=='x':
         grd_deft.compute_gradient_x()
     elif direc=='y':
@@ -127,6 +127,7 @@ def compute_gradient(grd, direc, ax, ay, az):
         grd_deft.compute_gradient_z()
 
     # return the result as a numpy array
+    out = np.require(np.zeros(grd.shape, order='F'), dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
     for k in range(out.shape[2]):
         for j in range(out.shape[1]):
             for i in range(out.shape[0]):
@@ -137,16 +138,17 @@ def compute_laplacian(grd, ax, ay, az):
 
     # ensure the numpy arrays have the expected alignment
     grd = np.require(grd, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
-    ax  = np.require(ax, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
-    ay  = np.require(ay, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
-    az  = np.require(az, dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
-    out = np.require(np.zeros(grd.shape, order='F'), dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    ax  = np.require(ax,  dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    ay  = np.require(ay,  dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
+    az  = np.require(az,  dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
 
     # use deft to compute gradient
     grd_deft = deft(grd.shape[0], grd.shape[1], grd.shape[2], ax, ay, az)
+    grd_deft.copy_data_from(grd)
     grd_deft.compute_laplacian()
 
     # return the result as a numpy array
+    out = np.require(np.zeros(grd.shape, order='F'), dtype='float64', requirements=['F_CONTIGUOUS', 'ALIGNED'])
     for k in range(out.shape[2]):
         for j in range(out.shape[1]):
             for i in range(out.shape[0]):
