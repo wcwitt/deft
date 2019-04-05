@@ -50,16 +50,16 @@ class deft(object):
     def integrate(self):
         return lib.integrate_c(self.obj)
 
-    def compute_gradient_x(self)
+    def compute_gradient_x(self):
         lib.compute_gradient_x(self.obj)
 
-    def compute_gradient_y(self)
+    def compute_gradient_y(self):
         lib.compute_gradient_y(self.obj)
 
-    def compute_gradient_z(self)
+    def compute_gradient_z(self):
         lib.compute_gradient_z(self.obj)
 
-    def compute_gradient_squared(self)
+    def compute_gradient_squared(self):
         lib.compute_gradient_squared(self.obj)
 
     def compute_laplacian(self):
