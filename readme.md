@@ -8,9 +8,9 @@
 
 **DEFT** includes a python wrapper. For example applications, see
 
-  * example: [sums of functions duplicated over a lattice](/python/sum-over-lattice.ipynb);
-  * example: [interpolation with Fourier transforms](/python/interpolate.ipynb);
-  * example: [computing derivatives with Fourier transforms](/python/derivatives.ipynb).
+  * example: [sums of functions duplicated over a lattice](https://nbviewer.jupyter.org/github/wcwitt/deft/blob/master/python/sum-over-lattice.ipynb);
+  * example: [interpolation with Fourier transforms](https://nbviewer.jupyter.org/github/wcwitt/deft/blob/master/python/interpolate.ipynb);
+  * example: [computing derivatives with Fourier transforms](https://nbviewer.jupyter.org/github/wcwitt/deft/blob/master/python/derivatives.ipynb).
   
 **DEFT** (currently) has several dependencies:
 
