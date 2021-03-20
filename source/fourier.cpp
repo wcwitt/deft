@@ -34,12 +34,16 @@ Complex3D fourier_transform(Double3D data)
         shape_r, stride_r, stride_c, axes, true,
         data.data(), ft.data(), 1.0);
 #else // fftw or mkl
+    // create copy because planning with FFTW_MEASURE can destroy input
+    // could use FFTW_ESTIMATE instead, but that doesn't always work with mkl
+    auto copy = data;
     // note: re-planning for same array shape should be fast
     // (see fftw manual section 4.2), 
     fftw_plan plan_r2c = fftw_plan_dft_r2c_3d(
         data.shape()[0], data.shape()[1], data.shape()[2], 
         data.data(), reinterpret_cast<fftw_complex*>(ft.data()),
         FFTW_MEASURE | FFTW_DESTROY_INPUT);
+    data = copy;
     fftw_execute(plan_r2c);
     fftw_destroy_plan(plan_r2c);
 #endif
@@ -67,12 +71,16 @@ Double3D inverse_fourier_transform(Complex3D ft, std::array<size_t,3> shape)
         shape_r, stride_c, stride_r, axes, false,
         ft.data(), data.data(), 1.0, 1);
 #else // fftw or mkl
+    // create copy because planning with FFTW_MEASURE can destroy input
+    // could use FFTW_ESTIMATE instead, but that doesn't always work with mkl
+    auto copy = ft;
     // note: re-planning for same array shape should be fast
     // (see fftw manual section 4.2), 
     fftw_plan plan_c2r = fftw_plan_dft_c2r_3d(
         data.shape()[0], data.shape()[1], data.shape()[2],
         reinterpret_cast<fftw_complex*>(ft.data()), data.data(),
         FFTW_MEASURE | FFTW_DESTROY_INPUT);
+    ft = copy;
     fftw_execute(plan_c2r);
     fftw_destroy_plan(plan_c2r);
 #endif
