@@ -1,0 +1,18 @@
+#-----------------------------------------------------------------------------
+#           TO USE POCKETFFT, UNCOMMENT THE FOLLOWING 'SET' LINE
+#-----------------------------------------------------------------------------
+set(DEFT_FFT_TYPE    "POCKETFFT"    CACHE STRING "")
+
+#-----------------------------------------------------------------------------
+#     TO USE FFTW, UNCOMMENT THE FOLLOWING 'SET' LINES AND UPDATE PATHS
+#-----------------------------------------------------------------------------
+#set(DEFT_FFT_TYPE       "FFTW"                   CACHE STRING "")
+#set(FFTW_INCLUDE_DIR    /path/to/include/dir/    CACHE PATH "")
+#set(FFTW_LIBRARY_DIR    /path/to/library/dir/    CACHE PATH "")
+
+#-----------------------------------------------------------------------------
+#   TO USE MKL-FFTW, UNCOMMENT THE FOLLOWING 'SET' LINES AND UPDATE PATHS
+#-----------------------------------------------------------------------------
+#set(DEFT_FFT_TYPE      "MKL"                    CACHE STRING "")
+#set(MKL_INCLUDE_DIR    /path/to/include/dir/    CACHE PATH "")
+#set(MKL_LIBRARY_DIR    /path/to/library/dir/    CACHE PATH "")
