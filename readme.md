@@ -11,7 +11,7 @@
 
   * [PocketFFT](https://gitlab.mpcdf.mpg.de/mtr/pocketfft/-/tree/cpp) (installs automatically), used by numpy;
   * [FFTW](http://www.fftw.org/) (requires separate installation), the "Fastest Fourier Transform in the West";
-  * [Intel-MKL](https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onemkl.html) (requires separate installation), can be the fastest.
+  * [Intel-MKL](https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onemkl.html) (requires separate installation), can be the fastest in practice.
 
 **DEFT** includes python bindings constructed with pybind11. For example applications, see
 
