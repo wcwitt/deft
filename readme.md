@@ -7,37 +7,68 @@
   * interpolation and filtering with Fourier transforms;
   * various derivatives (gradients, the Laplacian, etc.) computed with Fourier transforms.
 
-**DEFT** includes a python wrapper. For example applications, see
+**DEFT** has three FFT modes
 
-  * example: [sums of functions duplicated over a lattice](https://nbviewer.jupyter.org/github/wcwitt/deft/blob/master/examples/sum-over-lattice.ipynb);
-  * example: [interpolation with Fourier transforms](https://nbviewer.jupyter.org/github/wcwitt/deft/blob/master/examples/interpolate.ipynb);
-  * example: [computing derivatives with Fourier transforms](https://nbviewer.jupyter.org/github/wcwitt/deft/blob/master/examples/derivatives.ipynb).
+  * [PocketFFT](https://gitlab.mpcdf.mpg.de/mtr/pocketfft/-/tree/cpp) (installs automatically), used by numpy;
+  * [FFTW](http://www.fftw.org/) (requires separate installation), the "Fastest Fourier Transform in the West";
+  * [Intel-MKL](https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onemkl.html) (requires separate installation), can be the fastest.
+
+**DEFT** includes python bindings constructed with pybind11. For example applications, see
+
+  * example: [sums of functions duplicated over a lattice](https://nbviewer.jupyter.org/github/wcwitt/deft/blob/master/example/sum-over-lattice.ipynb);
+  * example: [interpolation with Fourier transforms](https://nbviewer.jupyter.org/github/wcwitt/deft/blob/master/example/interpolate.ipynb);
+  * example: [computing derivatives with Fourier transforms](https://nbviewer.jupyter.org/github/wcwitt/deft/blob/master/example/derivatives.ipynb).
   
-**DEFT** (currently) has several dependencies:
-
-  * [FFTW](http://www.fftw.org/), the "Fastest Fourier Transform in the West".
-
-**DEFT** is work in progress.
-
 ### installation notes
 
-compiling:
+##### basic build
+
+The default installation uses PocketFFT.
+ 
 ```
-cmake -H. -Bbuild
+mkdir build
 cd build
+cmake ..
 make
 cd ../test
 python -m unittest
 ```
 
-#### for intel-mkl
+##### build with FFTW
 
-prepare mkl environment:
+To use FFTW, first install the library. The following uses conda for this purpose.
+
 ```
-conda create -n deft_mkl python=3 numpy cmake
-conda activate deft_mkl
+conda create --name deft-fftw python=3 numpy cmake
+conda activate deft-fftw
+conda install -c conda-forge fftw
+mkdir build
+cd build
+cmake -DDEFT_FFT_TYPE=FFTW \
+      -DFFTW_INCLUDE_DIR=<conda-base>/envs/deft-fftw/include \
+      -DFFTW_LIBRARY_DIR=<conda-base>/envs/deft-fftw/lib \
+      ..
+make
+cd ../test
+python -m unittest
+```
+
+##### build with intel-mkl
+
+To use MKL, first install the library. The following uses conda for this purpose.
+
+```
+conda create --name deft-mkl python=3 numpy cmake
+conda activate deft-mkl
 conda install -c intel mkl-devel
+mkdir build
+cd build
+cmake -DDEFT_FFT_TYPE=MKL \
+      -DMKL_INCLUDE_DIR=<conda-base>/envs/deft-mkl/include \
+      -DMKL_LIBRARY_DIR=<conda-base>/envs/deft-mkl/lib \
+      ..
+make
+export LD_LIBRARY_PATH=<conda-base>/envs/deft-mkl/lib:$LD_LIBRARY_PATH
+cd ../test
+python -m unittest
 ```
-then set include and lib paths to
-<path/to/anaconda>/envs/deft_mkl/include
-<path/to/anaconda>/envs/deft_mkl/lib
