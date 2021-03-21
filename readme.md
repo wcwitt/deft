@@ -9,9 +9,9 @@
 
 **DEFT** has three FFT modes
 
-  * [PocketFFT](https://gitlab.mpcdf.mpg.de/mtr/pocketfft/-/tree/cpp) (installs automatically), used by numpy;
-  * [FFTW](http://www.fftw.org/) (requires separate installation), the "Fastest Fourier Transform in the West";
-  * [Intel-MKL](https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onemkl.html) (requires separate installation), can be the fastest in practice.
+  * [PocketFFT](https://gitlab.mpcdf.mpg.de/mtr/pocketfft/-/tree/cpp), used by numpy (installs automatically);
+  * [FFTW](http://www.fftw.org/), the "Fastest Fourier Transform in the West" (requires separate installation);
+  * [Intel-MKL](https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onemkl.html), can be the fastest in practice (requires separate installation).
 
 **DEFT** includes python bindings constructed with pybind11. For example applications, see
 
@@ -19,9 +19,9 @@
   * example: [interpolation with Fourier transforms](https://nbviewer.jupyter.org/github/wcwitt/deft/blob/master/example/interpolate.ipynb);
   * example: [computing derivatives with Fourier transforms](https://nbviewer.jupyter.org/github/wcwitt/deft/blob/master/example/derivatives.ipynb).
   
-### installation notes
+### Installation notes
 
-##### basic build
+##### Basic build
 
 The default installation uses PocketFFT.
  
@@ -34,7 +34,7 @@ cd ../test
 python -m unittest
 ```
 
-##### build with FFTW
+##### Build with FFTW
 
 To use FFTW, first install the library. The following uses conda for this purpose.
 
@@ -53,7 +53,7 @@ cd ../test
 python -m unittest
 ```
 
-##### build with intel-mkl
+##### Build with Intel-MKL
 
 To use MKL, first install the library. The following uses conda for this purpose.
 
