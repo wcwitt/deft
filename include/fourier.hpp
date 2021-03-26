@@ -41,7 +41,6 @@ double integrate(Double3D data, Box box);
 
 }
 
-
 // ---------- begin function definitions ---------- //
 
 
@@ -59,27 +58,18 @@ Double3D array_from_lattice_sum(
     F function_ft)
 {
     Complex3D ft({shape[0], shape[1], shape[2]/2+1});
+    Double3D kx = wave_vectors_x(ft.shape(), box);
+    Double3D ky = wave_vectors_y(ft.shape(), box);
+    Double3D kz = wave_vectors_z(ft.shape(), box);
     ft.set_elements(
-        [&ft, &box, &xyz_coords, &function_ft](size_t i) {
-            // get wave vector indices, shifted negative if appropriate
-            int u = i / ft.strides()[0];
-            int v = (i % ft.strides()[0]) / ft.strides()[1];
-            int w = (i % ft.strides()[0]) % ft.strides()[1];
-            u = u - (u > ft.shape()[0]/2) * ft.shape()[0]; 
-            v = v - (v > ft.shape()[1]/2) * ft.shape()[1]; 
-            // get wave vector and wave number
-            const double kx = box.wave_vectors_x(u,v,w);
-            const double ky = box.wave_vectors_y(u,v,w);
-            const double kz = box.wave_vectors_z(u,v,w);
-            const double k = box.wave_numbers(u,v,w);
-            // compute structure factor for this k-vector
-            std::complex<double> str_fact{0.0, 0.0};
+        [&kx, &ky, &kz, &xyz_coords, &function_ft](size_t i) {
+            std::complex<double> struct_fact{0.0,0.0};
             for (size_t a=0; a<xyz_coords.size(); ++a) {
-                double k_dot_r = kx*xyz_coords[a][0]
-                        + ky*xyz_coords[a][1] + kz*xyz_coords[a][2];
-                str_fact += exp(-std::complex<double>{0.0,1.0} * k_dot_r);
+                double k_dot_r = kx(i)*xyz_coords[a][0]
+                        + ky(i)*xyz_coords[a][1] + kz(i)*xyz_coords[a][2];
+                struct_fact += exp(-std::complex<double>{0.0,1.0} * k_dot_r);
             }
-            return str_fact * function_ft(k);
+            return struct_fact * function_ft(kx(i),ky(i),kz(i));
         });
     return inverse_fourier_transform(ft, shape) / box.volume();
 }

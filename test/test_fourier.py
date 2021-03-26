@@ -158,14 +158,14 @@ class TestFourier(unittest.TestCase):
         xyz = np.array([[0,0,0],
                         [2,0,0],
                         [0,1,2]])
-        def f_tilde(k):
+        def f_tilde(kx,ky,kz):
             w = 3.0
-            return np.exp(-k*k/(4.0*w))
+            return np.exp(-(kx*kx+ky*ky+kz*kz)/(4.0*w))
         grd = deft.array_from_lattice_sum(shape, box, xyz, f_tilde)
         xyz = np.array([[3,2,1]])
-        def f_tilde(k):
+        def f_tilde(kx,ky,kz):
             w = 5.0
-            return np.exp(-k*k/(4.0*w))
+            return np.exp(-(kx*kx+ky*ky+kz*kz)/(4.0*w))
         grd += deft.array_from_lattice_sum(shape, box, xyz, f_tilde)
         # test equality
         self.assertTrue(np.allclose(grd[...], data))

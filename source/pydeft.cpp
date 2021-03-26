@@ -153,7 +153,8 @@ PYBIND11_MODULE(pydeft, m) {
     m.def("laplacian", py::overload_cast<Double3D,Box>(&laplacian));
     m.def("laplacian", py::overload_cast<Complex3D,Box>(&laplacian));
     m.def("array_from_lattice_sum",
-            &array_from_lattice_sum<std::function<double(double)>>);
+            &array_from_lattice_sum<
+                std::function<double(double,double,double)>>);
     m.def("integrate", &integrate);
 }
 
