@@ -31,7 +31,7 @@ Double3D laplacian(Double3D data, Box box);
 Complex3D laplacian(Complex3D ft, Box box);
 
 template<typename F>
-Double3D Array_from_lattice_sum(
+Double3D array_from_lattice_sum(
         std::array<size_t,3> shape,
         Box box,
         std::vector<std::array<double,3>> xyz_coords,
