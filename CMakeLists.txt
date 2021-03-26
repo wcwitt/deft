@@ -3,6 +3,9 @@ project(deft LANGUAGES CXX)
 
 include(config.txt)
 
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 add_library(deft
 	SHARED
     source/box.cpp
