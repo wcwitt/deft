@@ -1,5 +1,8 @@
 name: CI
-on: [push]
+on:
+  push:
+    branches: [ master ]
+  workflow_dispatch:
 
 jobs:
 
@@ -15,7 +18,7 @@ jobs:
         with:
           python-version: '3.x'
       - name: Install python dependencies
-        run: python -m pip install --upgrade pip numpy
+        run: python -m pip install --upgrade pip numpy scipy
       - name: Configure and build deft with pocketfft
         run: |
           mkdir build
@@ -36,7 +39,7 @@ jobs:
           submodules: true
       - name: Create/activate conda environment and install fftw
         run: |
-          conda create --name deft-fftw python=3 numpy cmake
+          conda create --name deft-fftw cmake python=3 numpy scipy
           eval "$(conda shell.bash hook)" && conda activate deft-fftw
           conda install -c conda-forge fftw
       - name: Configure and build deft with fftw
@@ -64,7 +67,7 @@ jobs:
           submodules: true
       - name: Create/activate conda environment and install mkl
         run: |
-          conda create --name deft-mkl python=3 numpy cmake
+          conda create --name deft-mkl cmake python=3 numpy scipy
           eval "$(conda shell.bash hook)" && conda activate deft-mkl
           conda install -c intel mkl-devel
       - name: Configure and build deft with mkl
