@@ -28,6 +28,7 @@ jobs:
       - name: Run tests
         run: |
           cd test
+          export OMP_NUM_THREADS=1
           python -m unittest
 
   build-with-fftw:
@@ -56,6 +57,7 @@ jobs:
         run: |
           eval "$(conda shell.bash hook)" && conda activate deft-fftw
           cd test
+          export OMP_NUM_THREADS=1
           python -m unittest
 
   build-with-mkl:
@@ -85,4 +87,5 @@ jobs:
         run: |
           eval "$(conda shell.bash hook)" && conda activate deft-mkl
           cd test
+          export OMP_NUM_THREADS=1
           python -m unittest
