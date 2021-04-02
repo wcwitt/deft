@@ -134,6 +134,8 @@ class TestFourier(unittest.TestCase):
             print('\nOMP_NUM_THREADS is unset or greater than 1: '
                         'skipping test_array_from_lattice_sum.\n')
             return
+
+        # ----- first test, spherically symmetric functions -----
         # choose grid and box, and construct deft objects
         shape = (35, 35, 35)
         grd = deft.Double3D(shape)
@@ -167,6 +169,38 @@ class TestFourier(unittest.TestCase):
             w = 5.0
             return np.exp(-(kx*kx+ky*ky+kz*kz)/(4.0*w))
         grd += deft.array_from_lattice_sum(shape, box, xyz, f_tilde)
+        # test equality
+        self.assertTrue(np.allclose(grd[...], data))
+
+        # ----- second test, non-symmetric functions -----
+        # choose grid and box, and construct deft objects
+        shape = (35,35,35)
+        grd = deft.Double3D(shape)
+        box_vectors = 6.0*np.eye(3)
+        box = deft.Box(box_vectors)
+        # prepare spherical harmonics
+        Y00 = 1/np.sqrt(4*np.pi)
+        rsm = tools.real_sph_harm
+        # superimpose functions centered at (1,2,3)
+        # the functions have the form:  r^l * gaussian * Ylm/Y00
+        def f(x,y,z):
+            r = np.sqrt(x*x+y*y+z*z)
+            def g(w,r):
+                return (w/np.pi)**1.5*np.exp(-w*r*r)
+            return (  r**1*g(3,r)*rsm(1,1,x,y,z)/Y00
+                    + r**2*g(4,r)*rsm(2,0,x,y,z)/Y00
+                    + r**3*g(3,r)*rsm(3,-1,x,y,z)/Y00 )
+        data = tools.get_function_on_grid(
+                f, shape, box_vectors, np.array([1,2,3]))
+        # generate the same data with deft and fourier transforms
+        def f_tilde(kx,ky,kz):
+            k = np.sqrt(kx*kx+ky*ky+kz*kz)
+            def g_tilde(w,k):
+                return np.exp(-k*k/(4*w))
+            return (  (-1j*k/6)**1*g_tilde(3,k)*rsm(1,1,kx,ky,kz)/Y00
+                    + (-1j*k/8)**2*g_tilde(4,k)*rsm(2,0,kx,ky,kz)/Y00
+                    + (-1j*k/6)**3*g_tilde(3,k)*rsm(3,-1,kx,ky,kz)/Y00 )
+        grd = deft.array_from_lattice_sum(shape, box, [[1,2,3]], f_tilde)
         # test equality
         self.assertTrue(np.allclose(grd[...], data))
 

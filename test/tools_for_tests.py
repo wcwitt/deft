@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.special import sph_harm
 
 def get_box_geometry(vectors):
     """expects box vectors in rows of 'vectors'"""
@@ -44,3 +45,20 @@ def get_function_on_grid(function, shape, vectors, r0=None):
     # evaluate function
     return function(x,y,z)
 
+def real_sph_harm(l, m, x, y, z):
+
+    r = np.sqrt(x*x+y*y+z*z)
+    # compute azimuthal angle, domain of [0,2*pi)
+    theta = np.arctan2(y,x)
+    theta += (theta<0)*2*np.pi
+    # compute polar angle, setting phi=0 for r->0
+    phi = np.zeros(np.array(r).shape) # np.array() enables scalar x,y,z
+    np.divide(z, r, out=phi, where=(r>1e-12))
+    phi = np.arccos(phi)
+    # return real spherical harmonic
+    if m<0:
+        return np.sqrt(2)*(-1)**m*np.imag(sph_harm(np.abs(m),l,theta,phi))
+    elif m==0:
+        return np.real(sph_harm(m,l,theta,phi))
+    else:
+        return np.sqrt(2)*(-1)**m*np.real(sph_harm(m,l,theta,phi))
