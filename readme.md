@@ -26,6 +26,8 @@
 The default installation uses PocketFFT.
  
 ```
+git clone --recursive https://github.com/wcwitt/deft
+cd deft
 mkdir build
 cd build
 cmake ..
@@ -39,6 +41,8 @@ python -m unittest
 To use FFTW, first install the library. The following uses conda for this purpose.
 
 ```
+git clone --recursive https://github.com/wcwitt/deft
+cd deft
 conda create --name deft-fftw python=3 numpy cmake
 conda activate deft-fftw
 conda install -c conda-forge fftw
@@ -58,6 +62,8 @@ python -m unittest
 To use MKL, first install the library. The following uses conda for this purpose.
 
 ```
+git clone --recursive https://github.com/wcwitt/deft
+cd deft
 conda create --name deft-mkl python=3 numpy cmake
 conda activate deft-mkl
 conda install -c intel mkl-devel
