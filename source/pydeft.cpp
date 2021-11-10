@@ -156,6 +156,7 @@ PYBIND11_MODULE(pydeft, m) {
             &array_from_lattice_sum<
                 std::function<std::complex<double>(double,double,double)>>);
     m.def("integrate", &integrate);
+    m.def("fourier_interpolate", &fourier_interpolate);
 }
 
 }
