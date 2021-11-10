@@ -204,5 +204,20 @@ class TestFourier(unittest.TestCase):
         # test equality
         self.assertTrue(np.allclose(grd[...], data))
 
+    def test_fourier_interpolate(self):
+
+        shape = (7,7,7)
+        dense_shape = (77,77,77)
+        # create f(r) = cos(4*pi*x) on coarse and dense grids
+        data = deft.Double3D(shape).fill(0)
+        for i in range(shape[0]):
+            data[i,:,:] = np.cos(4.0*np.pi*float(i)/shape[0])
+        dense_data = deft.Double3D(dense_shape).fill(0)
+        for i in range(dense_shape[0]):
+            dense_data[i,:,:] = np.cos(4.0*np.pi*float(i)/dense_shape[0])
+        # test interpolation
+        interpolated_data = deft.fourier_interpolate(data, dense_data.shape())
+        self.assertTrue(np.allclose(interpolated_data[...], dense_data))
+
 if __name__ == '__main__':
     unittest.main()

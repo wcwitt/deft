@@ -39,6 +39,8 @@ Double3D array_from_lattice_sum(
 
 double integrate(Double3D data, Box box);
 
+Double3D fourier_interpolate(Double3D data, std::array<size_t,3> shape);
+
 }
 
 // ---------- begin function definitions ---------- //

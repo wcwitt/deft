@@ -238,4 +238,54 @@ double integrate(Double3D data, Box box)
     return data.sum() * box.volume() / data.size();
 }
 
+DEFT_INLINE
+Double3D fourier_interpolate(Double3D data, std::array<size_t,3> shape)
+{
+    Complex3D data_ft = fourier_transform(data);
+    Complex3D dense_ft({shape[0], shape[1], shape[2]/2+1});
+    dense_ft.fill(0.0);
+    // grid dimensions and dense grid dimensions
+    size_t n1 = data.shape()[0];  size_t n2 = data.shape()[1];  size_t n3 = data.shape()[2];
+    size_t dn1 = shape[0];  size_t dn2 = shape[1];  size_t dn3 = shape[2];
+    // indices of highest frequencies along a given dimension
+    size_t h1 = n1/2;  size_t h2 = n2/2;  size_t h3 = n3/2;
+    // flags for odd/even
+    bool e1=false, e2=false;
+    if (n1%2==0) e1=true;
+    if (n2%2==0) e2=true;
+    // ----- first part of n1, first part of n2 -----
+    for (size_t i=0; i<=h1; ++i) {
+        for (size_t j=0; j<=h2; ++j) {
+            for (size_t k=0; k<=h3; ++k) {
+                dense_ft(i,j,k) = data_ft(i,j,k);
+            }
+        }
+    }
+    // ----- first part of n1, second part of n2 -----
+    for (size_t i=0; i<=h1; ++i) {
+        for (size_t j=1; j<=h2; ++j) {
+            for (size_t k=0; k<=h3; ++k) {
+                dense_ft(i,dn2-h2-1+j,k) = data_ft(i,h2-e2+j,k);
+            }
+        }
+    }
+    // ----- second part of n1, first part of n2 -----
+    for (size_t i=1; i<=h1; ++i) {
+        for (size_t j=0; j<=h2; ++j) {
+            for (size_t k=0; k<=h3; ++k) {
+                dense_ft(dn1-h1-1+i,j,k) = data_ft(h1-e1+i,j,k);
+            }
+        }
+    }
+    // ----- second part of n1, second part of n2 -----
+    for (size_t i=1; i<=h1; ++i) {
+        for (size_t j=1; j<=h2; ++j) {
+            for (size_t k=0; k<=h3; ++k) {
+                dense_ft(dn1-h1-1+i,dn2-h2-1+j,k) = data_ft(h1-e1+i,h2-e2+j,k);
+            }
+        }
+    }
+    return inverse_fourier_transform(dense_ft, shape);
+}
+
 }
