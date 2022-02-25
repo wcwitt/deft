@@ -44,19 +44,13 @@ Double3D array_from_lattice_sum(
     F function_ft)
 {
     Complex3D ft({shape[0], shape[1], shape[2]/2+1});
+    Complex3D str_fac = structure_factor(shape, box, xyz_coords);
     Double3D kx = wave_vectors_x(ft.shape(), box);
     Double3D ky = wave_vectors_y(ft.shape(), box);
     Double3D kz = wave_vectors_z(ft.shape(), box);
     ft.set_elements(
-        [&kx, &ky, &kz, &xyz_coords, &function_ft](size_t i) {
-            std::complex<double> struct_fact{0.0,0.0};
-            for (size_t a=0; a<xyz_coords.size(); ++a) {
-                double k_dot_r =   kx(i)*xyz_coords[a][0]
-                                 + ky(i)*xyz_coords[a][1]
-                                 + kz(i)*xyz_coords[a][2];
-                struct_fact += exp(-std::complex<double>{0.0,1.0} * k_dot_r);
-            }
-            return struct_fact * function_ft(kx(i),ky(i),kz(i));
+        [&str_fac, &kx, &ky, &kz, &xyz_coords, &function_ft](size_t i) {
+            return str_fac(i) * function_ft(kx(i),ky(i),kz(i));
         });
     return inverse_fourier_transform(ft, shape) / box.volume();
 }
