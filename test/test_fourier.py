@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import scipy.signal
 import sys
 import unittest
 
@@ -125,6 +126,52 @@ class TestFourier(unittest.TestCase):
             return (4.0*w*w*rr-6.0*w)*((w/np.pi)**1.5*np.exp(-w*rr))
         lapl = tools.get_function_on_grid(f, shape, box_vectors)
         self.assertTrue(np.allclose(grd[...], lapl))
+
+    def test_cardinal_b_spline_values(self):
+
+        m = 11                 # grid points in [0,1)
+        for n in range(2,31):  # spline order
+            p = n-1            # spline max degree
+            spl = np.zeros(m*n)
+            for i in range(m):
+                array = deft.cardinal_b_spline_values(i/m,n)
+                for j in range(n):
+                    spl[i+j*m] = array[j]
+            x = np.linspace(0,n,m*n,endpoint=False)
+            self.assertTrue(np.allclose(spl, scipy.signal.bspline(x-(p+1)/2,p)))
+
+    def test_exponential_spline_b(self):
+
+        order = 20
+        m = 3  # accuracy degrades for m>3
+        N = 9
+        x = np.linspace(0,8,20,endpoint=False)
+        f = np.exp(2*np.pi*1j*m/N*x)
+        s = np.zeros(x.size, dtype=complex)
+        for i in range(x.size):
+            for k in range(-50,50):
+                if x[i]-k<=0 or x[i]-k>=order:
+                    continue
+                M = deft.cardinal_b_spline_values(x[i]-k-np.floor(x[i]-k),order)
+                s[i] += M[int(np.floor(x[i]-k))]*np.exp(2*np.pi*1j*m/N*k)
+        s *= deft.exponential_spline_b(m,N,order)
+        self.assertTrue(np.allclose(f, s))
+
+    def test_structure_factor_spline(self):
+
+        shape = (35,36,37)
+        grd = deft.Double3D(shape)
+        box = deft.Box([[4.9,0.1,0.2], [-0.2,5.0,0.3], [0.3,-0.1,5.1]])
+        xyz = np.array([[0,0,0], [2,0.1,0.2], [0.3,1,2]])
+        str_fac = deft.structure_factor(shape, box, xyz)
+        str_fac_spline = deft.structure_factor_spline(shape, box, xyz, 20)
+        # spline approx only highly accurate for low-freq wavevectors
+        t = 10
+        self.assertTrue(
+              np.allclose(str_fac[:t,:t,:t], str_fac_spline[:t,:t,:t])
+            * np.allclose(str_fac[:t,-t:,:t], str_fac_spline[:t,-t:,:t])
+            * np.allclose(str_fac[-t:,:t,:t], str_fac_spline[-t:,:t,:t])
+            * np.allclose(str_fac[-t:,-t:,:t], str_fac_spline[-t:,-t:,:t]))
 
     def test_array_from_lattice_sum(self):
 
