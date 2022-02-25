@@ -157,9 +157,15 @@ PYBIND11_MODULE(pydeft, m) {
     m.def("cardinal_b_spline_values", &cardinal_b_spline_values);
     m.def("exponential_spline_b", &exponential_spline_b);
     m.def("structure_factor_spline", &structure_factor_spline);
-    m.def("array_from_lattice_sum",
-            &array_from_lattice_sum<
-                std::function<std::complex<double>(double,double,double)>>);
+    m.def(
+        "array_from_lattice_sum",
+        &array_from_lattice_sum<std::function<std::complex<double>(double,double,double)>>,
+        py::arg("shape"),
+        py::arg("box"),
+        py::arg("xyz_coords"),
+        py::arg("function_ft"),
+        py::arg("spline_order")=-1);
+
     m.def("integrate", &integrate);
     m.def("fourier_interpolate", &fourier_interpolate);
 }

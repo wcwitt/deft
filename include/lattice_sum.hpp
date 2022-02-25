@@ -27,7 +27,8 @@ Double3D array_from_lattice_sum(
         std::array<size_t,3> shape,
         Box box,
         std::vector<std::array<double,3>> xyz_coords,
-        F function_ft);
+        F function_ft,
+        int spline_order=-1);
 }
 
 #ifdef DEFT_HEADER_ONLY
@@ -41,10 +42,16 @@ Double3D array_from_lattice_sum(
     std::array<size_t,3> shape,
     Box box,
     std::vector<std::array<double,3>> xyz_coords,
-    F function_ft)
+    F function_ft,
+    int spline_order)
 {
     Complex3D ft({shape[0], shape[1], shape[2]/2+1});
-    Complex3D str_fac = structure_factor(shape, box, xyz_coords);
+    Complex3D str_fac(ft.shape());
+    if (spline_order<0) {
+        str_fac = structure_factor(shape,box,xyz_coords);
+    } else {
+        str_fac = structure_factor_spline(shape,box,xyz_coords,spline_order);
+    }
     Double3D kx = wave_vectors_x(ft.shape(), box);
     Double3D ky = wave_vectors_y(ft.shape(), box);
     Double3D kz = wave_vectors_z(ft.shape(), box);
