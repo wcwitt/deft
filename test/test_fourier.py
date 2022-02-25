@@ -203,7 +203,7 @@ class TestFourier(unittest.TestCase):
             return (w/np.pi)**1.5*np.exp(-w*(x*x+y*y+z*z))
         data += tools.get_function_on_grid(
                 f, shape, box_vectors, np.array([3.0,2.0,1.0]))
-        # generate the same data with deft and fourier transforms
+        # test against same data generated with deft and fourier transforms
         xyz = np.array([[0,0,0],
                         [2,0,0],
                         [0,1,2]])
@@ -216,7 +216,20 @@ class TestFourier(unittest.TestCase):
             w = 5.0
             return np.exp(-(kx*kx+ky*ky+kz*kz)/(4.0*w))
         grd += deft.array_from_lattice_sum(shape, box, xyz, f_tilde)
-        # test equality
+        self.assertTrue(np.allclose(grd[...], data))
+        # repeat test with splined structure factor
+        xyz = np.array([[0,0,0],
+                        [2,0,0],
+                        [0,1,2]])
+        def f_tilde(kx,ky,kz):
+            w = 3.0
+            return np.exp(-(kx*kx+ky*ky+kz*kz)/(4.0*w))
+        grd = deft.array_from_lattice_sum(shape, box, xyz, f_tilde, 10)
+        xyz = np.array([[3,2,1]])
+        def f_tilde(kx,ky,kz):
+            w = 5.0
+            return np.exp(-(kx*kx+ky*ky+kz*kz)/(4.0*w))
+        grd += deft.array_from_lattice_sum(shape, box, xyz, f_tilde, 10)
         self.assertTrue(np.allclose(grd[...], data))
 
         # ----- second test, non-symmetric functions -----
@@ -239,7 +252,7 @@ class TestFourier(unittest.TestCase):
                     + r**3*g(3,r)*rsm(3,-1,x,y,z)/Y00 )
         data = tools.get_function_on_grid(
                 f, shape, box_vectors, np.array([1,2,3]))
-        # generate the same data with deft and fourier transforms
+        # test against same data generated with deft and fourier transforms
         def f_tilde(kx,ky,kz):
             k = np.sqrt(kx*kx+ky*ky+kz*kz)
             def g_tilde(w,k):
@@ -248,7 +261,9 @@ class TestFourier(unittest.TestCase):
                     + (-1j*k/8)**2*g_tilde(4,k)*rsm(2,0,kx,ky,kz)/Y00
                     + (-1j*k/6)**3*g_tilde(3,k)*rsm(3,-1,kx,ky,kz)/Y00 )
         grd = deft.array_from_lattice_sum(shape, box, [[1,2,3]], f_tilde)
-        # test equality
+        self.assertTrue(np.allclose(grd[...], data))
+        # repeat test with splined structure factor
+        grd = deft.array_from_lattice_sum(shape, box, [[1,2,3]], f_tilde, 20)
         self.assertTrue(np.allclose(grd[...], data))
 
     def test_fourier_interpolate(self):
