@@ -152,6 +152,10 @@ PYBIND11_MODULE(pydeft, m) {
     m.def("grad_dot_grad", &grad_dot_grad);
     m.def("laplacian", py::overload_cast<Double3D,Box>(&laplacian));
     m.def("laplacian", py::overload_cast<Complex3D,Box>(&laplacian));
+    m.def("structure_factor", &structure_factor);
+    m.def("cardinal_b_spline_values", &cardinal_b_spline_values);
+    m.def("exponential_spline_b", &exponential_spline_b);
+    m.def("structure_factor_spline", &structure_factor_spline);
     m.def("array_from_lattice_sum",
             &array_from_lattice_sum<
                 std::function<std::complex<double>(double,double,double)>>);
