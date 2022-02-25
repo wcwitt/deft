@@ -10,6 +10,7 @@ add_library(deft
 	SHARED
     source/box.cpp
     source/fourier.cpp
+    source/lattice_sum.cpp
 )
 target_include_directories(deft PUBLIC include)
 

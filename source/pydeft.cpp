@@ -1,6 +1,7 @@
 #include "array.hpp"
-#include "fourier.hpp"
 #include "box.hpp"
+#include "fourier.hpp"
+#include "lattice_sum.hpp"
 
 #include <pybind11/pybind11.h>
 #include <pybind11/complex.h>
