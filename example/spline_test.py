@@ -1,13 +1,9 @@
 import numpy as np
-import matplotlib.pyplot as plt
-
 from timeit import default_timer as timer
 
 import os
 import sys
-
-sys.path.append(os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), '../build/'))
+sys.path.append(os.path.join(os.getcwd(), '../build/'))
 import pydeft as deft
 
 # Gaussian in Fourier space
