@@ -12,15 +12,14 @@ def f_tilde(kx,ky,kz):
   return np.exp(-(kx*kx+ky*ky+kz*kz)/(4.0*w))
 
 # define grid and box, and construct deft objects
-shape = (50, 50, 50)
-grd = deft.Double3D(shape)
 box_vectors = 10*np.eye(3)
 box = deft.Box(box_vectors)
 
 print('{:^10} {:^20} {:^20}'.format('N', 'Naive', 'Spline'))
 
-for N in np.linspace(1, 1000000, 20):
+for N in (np.linspace(10, 100, 10)**3)[-2:]:
   Ni = round(N**(1/3))
+  shape = (Ni, Ni, Ni)
   x = np.linspace(0, 10, Ni)
   x,y,z = np.meshgrid(x,x,x, indexing = 'ij')
   
