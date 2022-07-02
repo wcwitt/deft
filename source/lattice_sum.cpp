@@ -33,6 +33,7 @@ Complex3D structure_factor(
     return structure_factor;
 }
 
+DEFT_INLINE
 std::vector<double> cardinal_b_spline_values(double x, int order) {
 /*
     With n=order, returns [M_n(x+i) for i=0,1,...,n-1]
@@ -56,6 +57,7 @@ std::vector<double> cardinal_b_spline_values(double x, int order) {
     return M;
 }
 
+DEFT_INLINE
 std::complex<double> exponential_spline_b(int m, int N, int order) {
     auto M = cardinal_b_spline_values(0,order);
     auto b = std::complex<double>(0,0);
@@ -65,6 +67,7 @@ std::complex<double> exponential_spline_b(int m, int N, int order) {
     return exp(std::complex<double>(0,1)*(2*M_PI*m*double(order-1)/N)) / b;
 }
 
+DEFT_INLINE
 Complex3D structure_factor_spline(
         std::array<size_t,3> shape,
         Box box,
