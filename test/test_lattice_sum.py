@@ -16,7 +16,6 @@ class TestLatticeSum(unittest.TestCase):
 
         m = 11                 # grid points in [0,1)
         for n in range(2,31):  # spline order
-            p = n-1            # spline max degree
             spl = np.zeros(m*n)
             for i in range(m):
                 array = deft.cardinal_b_spline_values(i/m,n)
@@ -30,7 +29,6 @@ class TestLatticeSum(unittest.TestCase):
 
         m = 11                 # grid points in [0,1)
         for n in range(3,31):  # spline order
-            p = n-1            # spline max degree
             spl_deriv = np.zeros(m*n)
             for i in range(m):
                 array = deft.cardinal_b_spline_derivatives(i/m,n)
