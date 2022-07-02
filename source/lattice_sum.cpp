@@ -58,6 +58,28 @@ std::vector<double> cardinal_b_spline_values(double x, int order) {
 }
 
 DEFT_INLINE
+std::vector<double> cardinal_b_spline_derivatives(double x, int order) {
+/*
+    With n=order, returns [M_n'(x+i) for i=0,1,...,n-1]
+    Requires x=[0,1) and order>2
+    The basic formula is
+        M_n'[i] = M_{n-1}[i] - M_{n-1}[i-1]
+*/
+    if (x<0.0 or x>=1.0)
+        throw std::runtime_error("cardinal_b_spline_derivatives: invalid x");
+    if (order<3)
+        throw std::runtime_error("cardinal_b_spline_derivatives: invalid order");
+    auto Mp = std::vector<double>(order, 0.0);
+    auto M = cardinal_b_spline_values(x, order-1);
+    Mp[0] = M[0];
+    for (int i=1; i<order-1; i++) {
+        Mp[i] = M[i] - M[i-1];
+    }
+    Mp[order-1] = -M[order-2];
+    return Mp;
+}
+
+DEFT_INLINE
 std::complex<double> exponential_spline_b(int m, int N, int order) {
     auto M = cardinal_b_spline_values(0,order);
     auto b = std::complex<double>(0,0);

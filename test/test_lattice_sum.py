@@ -1,6 +1,6 @@
 import numpy as np
 import os
-import scipy.signal
+import scipy.interpolate
 import sys
 import unittest
 
@@ -10,7 +10,7 @@ import pydeft as deft
 
 import tools_for_tests as tools
 
-class TestFourier(unittest.TestCase):
+class TestLatticeSum(unittest.TestCase):
 
     def test_cardinal_b_spline_values(self):
 
@@ -23,7 +23,22 @@ class TestFourier(unittest.TestCase):
                 for j in range(n):
                     spl[i+j*m] = array[j]
             x = np.linspace(0,n,m*n,endpoint=False)
-            self.assertTrue(np.allclose(spl, scipy.signal.bspline(x-(p+1)/2,p)))
+            bspl = scipy.interpolate.BSpline.basis_element(range(0,n+1))
+            self.assertTrue(np.allclose(spl, bspl(x)))
+
+    def test_cardinal_b_spline_derivatives(self):
+
+        m = 11                 # grid points in [0,1)
+        for n in range(3,31):  # spline order
+            p = n-1            # spline max degree
+            spl_deriv = np.zeros(m*n)
+            for i in range(m):
+                array = deft.cardinal_b_spline_derivatives(i/m,n)
+                for j in range(n):
+                    spl_deriv[i+j*m] = array[j]
+            x = np.linspace(0,n,m*n,endpoint=False)
+            bspl = scipy.interpolate.BSpline.basis_element(range(0,n+1))
+            self.assertTrue(np.allclose(spl_deriv, bspl.derivative()(x)))
 
     def test_exponential_spline_b(self):
 

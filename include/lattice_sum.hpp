@@ -15,6 +15,7 @@ Complex3D structure_factor(
         std::vector<std::array<double,3>> xyz_coords);
 
 std::vector<double> cardinal_b_spline_values(double x, int order);
+std::vector<double> cardinal_b_spline_derivatives(double x, int order);
 std::complex<double> exponential_spline_b(int m, int N, int order);
 Complex3D structure_factor_spline(
         std::array<size_t,3> shape,

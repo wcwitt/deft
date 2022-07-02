@@ -155,6 +155,7 @@ PYBIND11_MODULE(pydeft, m) {
     m.def("laplacian", py::overload_cast<Complex3D,Box>(&laplacian));
     m.def("structure_factor", &structure_factor);
     m.def("cardinal_b_spline_values", &cardinal_b_spline_values);
+    m.def("cardinal_b_spline_derivatives", &cardinal_b_spline_derivatives);
     m.def("exponential_spline_b", &exponential_spline_b);
     m.def("structure_factor_spline", &structure_factor_spline);
     m.def(
