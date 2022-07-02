@@ -38,6 +38,7 @@ std::vector<double> cardinal_b_spline_values(double x, int order) {
 /*
     With n=order, returns [M_n(x+i) for i=0,1,...,n-1]
     Requires x=[0,1) and order>1
+    By definition, M_n is zero for input<0 or input>n
     The basic formula is
         M_n[i] = (x+i)/(n-1)*M_{n-1}[i] + (n-x-i)/(n-1)*M_{n-1}[i-1]
 */
@@ -62,6 +63,7 @@ std::vector<double> cardinal_b_spline_derivatives(double x, int order) {
 /*
     With n=order, returns [M_n'(x+i) for i=0,1,...,n-1]
     Requires x=[0,1) and order>2
+    By definition, M_n' is zero for input<0 or input>n
     The basic formula is
         M_n'[i] = M_{n-1}[i] - M_{n-1}[i-1]
 */
