@@ -144,7 +144,6 @@ Complex3D structure_factor_spline(
         r[2] = m[2][0]*v[0] + m[2][1]*v[1] + m[2][2]*v[2];
         return r;
     };
-
     // compute fractional coordinates and make sure they lie in [0,1)
     std::vector<std::array<double,3>> frac_coords(xyz_coords.size());
     for (size_t i=0; i<frac_coords.size(); ++i) {
