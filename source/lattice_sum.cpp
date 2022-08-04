@@ -144,12 +144,16 @@ Complex3D structure_factor_spline(
         r[2] = m[2][0]*v[0] + m[2][1]*v[1] + m[2][2]*v[2];
         return r;
     };
-    // compute fractional coordinates
+    // compute fractional coordinates and make sure they lie in [0,1)
     std::vector<std::array<double,3>> frac_coords(xyz_coords.size());
     for (size_t i=0; i<frac_coords.size(); ++i) {
         frac_coords[i] = m_dot_v(ainv, xyz_coords[i]);
-        //for (size_t j=0; j<3; ++j)
-        //    frac_coords[i][j] -= std::floor(frac_coords[i][j]);
+        for (size_t j=0; j<3; ++j) {
+            // both lines are necessary as a single operation can fail for small
+            // negative values (e.g. -1e-20), mapping them to 1.0 instead of 0.0
+            frac_coords[i][j] -= std::floor(frac_coords[i][j]);
+            frac_coords[i][j] -= std::floor(frac_coords[i][j]);
+        }
     }
 
     int N0 = shape[0];
