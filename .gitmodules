@@ -1,7 +1,8 @@
-[submodule "external/pybind11"]
-	path = external/pybind11
-	url = https://github.com/pybind/pybind11
 [submodule "external/pocketfft"]
 	path = external/pocketfft
 	url = https://gitlab.mpcdf.mpg.de/mtr/pocketfft
 	branch = cpp
+[submodule "external/pybind11"]
+	path = external/pybind11
+	url = https://github.com/pybind/pybind11
+	branch = stable
